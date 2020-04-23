@@ -139,7 +139,7 @@ public class CalculationEngine {
 				System.out.println("evaluating " + name + "=" + exp);
 				try {
 					Object ret = evaluator.evaluate(exp, name);
-					if (ret != null && !(ret instanceof NTEObject)) {
+					if (!(ret instanceof NTEObject)) {
 						System.out.println("科目" + name + ":" + ret);
 						evaluator.getEvaluationCtx().put(name, ret);
 						if (ret instanceof ValueTupleListWrapper)
