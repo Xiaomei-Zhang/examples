@@ -254,12 +254,9 @@ public class Functions {
 	}
 
 	/**
-	 * expandPerson - 将两个和人员有关的表（物理原始数据表或是在内存中的表)做关联
+	 * expandPerson - 将多个和人员有关的表（物理原始数据表或是在内存中的表)做关联
 	 * 
-	 * @param t1
-	 *            - 表1
-	 * @param t2
-	 *            - 表2
+	 * @param tList 需要关联的表
 	 * @return 关联后的表
 	 */
 	public static DataSheetWrapper associateByPerson(Object... tList) {
