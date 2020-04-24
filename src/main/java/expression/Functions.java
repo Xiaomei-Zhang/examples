@@ -26,7 +26,9 @@ import tech.tablesaw.selection.Selection;
 public class Functions {
 	/**
 	 * sum - 对原始数据项（对应于原始数据表中的一列）求和
-	 * @param col - 原始数据表（比如“人员数据-HR”）中的一列求和
+	 * 
+	 * @param col
+	 *            - 原始数据表（比如“人员数据-HR”）中的一列求和
 	 * @return 求和后的累计值
 	 */
 	public static Double sum(NumericColumn col) {
@@ -34,13 +36,18 @@ public class Functions {
 	}
 
 	/**
-	 * sumif - 对原始数据项（对应于原始数据表中的一列）先过滤再求和
-	 *         过滤条件的表达式的格式是：列名 操作符 值
-	 * @param table - 原始数据处理表
-	 * @param col_name - 过滤条件原始数据表的列名
-	 * @param operator - 操作符
-	 * @param val - 值
-	 * @param sum_col_name - 做求和操作对应的列名
+	 * sumif - 对原始数据项（对应于原始数据表中的一列）先过滤再求和 过滤条件的表达式的格式是：列名 操作符 值
+	 * 
+	 * @param table
+	 *            - 原始数据处理表
+	 * @param col_name
+	 *            - 过滤条件原始数据表的列名
+	 * @param operator
+	 *            - 操作符
+	 * @param val
+	 *            - 值
+	 * @param sum_col_name
+	 *            - 做求和操作对应的列名
 	 * @return 求和后的累计值
 	 */
 	public static Double sumif(DataSheetWrapper table, String col_name, String operator, Object val,
@@ -55,11 +62,15 @@ public class Functions {
 	}
 
 	/**
-	 * join 
-	 * @param table1： 原始数据表1
-	 * @param col_name1： 原始数据表1中使用的关联列的名字
+	 * join
+	 * 
+	 * @param table1：
+	 *            原始数据表1
+	 * @param col_name1：
+	 *            原始数据表1中使用的关联列的名字
 	 * @param table2：原始数据表2
-	 * @param col_name2: 原始数据表2中使用的关联列的名字
+	 * @param col_name2:
+	 *            原始数据表2中使用的关联列的名字
 	 * @return 关联后的表
 	 */
 	public static DataSheetWrapper join(DataSheetWrapper table1, String col_name1, DataSheetWrapper table2,
@@ -101,7 +112,9 @@ public class Functions {
 
 	/**
 	 * count - 原始数据项对应的行数
-	 * @param col - 原始数据项对应的列
+	 * 
+	 * @param col
+	 *            - 原始数据项对应的列
 	 * @return 行数
 	 */
 	public static Integer count(Column col) {
@@ -109,13 +122,18 @@ public class Functions {
 	}
 
 	/**
-	 * countif - 原始数据表中符合过滤条件的行的总数
-	 *            过滤条件的表达式的格式是：列名 操作符 值 
-	 * @param table - 原始数据表
-	 * @param col_name - 过滤条件中的列名
-	 * @param operator - 过滤条件中的操作符
-	 * @param val - 过滤条件中的值
-	 * @param count_col_name - 计数列的行数
+	 * countif - 原始数据表中符合过滤条件的行的总数 过滤条件的表达式的格式是：列名 操作符 值
+	 * 
+	 * @param table
+	 *            - 原始数据表
+	 * @param col_name
+	 *            - 过滤条件中的列名
+	 * @param operator
+	 *            - 过滤条件中的操作符
+	 * @param val
+	 *            - 过滤条件中的值
+	 * @param count_col_name
+	 *            - 计数列的行数
 	 * @return 总数
 	 */
 	public static Integer countif(DataSheetWrapper table, String col_name, String operator, Object val,
@@ -131,9 +149,13 @@ public class Functions {
 
 	/**
 	 * iffunc - 按条件评估表达式
-	 * @param condition - 条件
-	 * @param valForTrue - 条件为真时评估的表达式
-	 * @param valForFalse - 条件为假时评估的表达式
+	 * 
+	 * @param condition
+	 *            - 条件
+	 * @param valForTrue
+	 *            - 条件为真时评估的表达式
+	 * @param valForFalse
+	 *            - 条件为假时评估的表达式
 	 * @return 表达式评估后的结果
 	 */
 	public static Object iffunc(Boolean condition, Object valForTrue, Object valForFalse) {
@@ -145,9 +167,12 @@ public class Functions {
 	}
 
 	/**
-	 * round 
-	 * @param d - 待四舍五入的数字
-	 * @param digits - 四舍五入需要保留的位数
+	 * round
+	 * 
+	 * @param d
+	 *            - 待四舍五入的数字
+	 * @param digits
+	 *            - 四舍五入需要保留的位数
 	 * @return 四舍五入后的结果
 	 */
 	public static Double round(BigDecimal d, int digits) {
@@ -156,13 +181,19 @@ public class Functions {
 
 	/**
 	 * sumby - 分堆累计
-	 * @param table - 数据表
-	 * @param groupByColName - 分堆基于的列
-	 * @param sumColName - 累计的列
-	 * @param defaultTimeStr - 缺省时间标示
+	 * 
+	 * @param table
+	 *            - 数据表
+	 * @param groupByColName
+	 *            - 分堆基于的列
+	 * @param sumColName
+	 *            - 累计的列
+	 * @param defaultTimeStr
+	 *            - 缺省时间标示
 	 * @return 累计的结果
 	 */
-	public static List<ValueTuple> sumby(DataSheetWrapper table, String groupByColName, String sumColName, String defaultTimeStr) {
+	public static List<ValueTuple> sumby(DataSheetWrapper table, String groupByColName, String sumColName,
+			String defaultTimeStr) {
 		List<ValueTuple> ret = new ArrayList<ValueTuple>();
 		Table t = (Table) ((DataSheetWrapper) table).unwrap(table);
 		Map<String, DataItemDef> dataItemDefs = ((DataSheetWrapper) table).getDef();
@@ -183,7 +214,7 @@ public class Functions {
 				}
 			}
 			String timeStr = defaultTimeStr;
-			if (dateColDef != null) 
+			if (dateColDef != null)
 				timeStr = r.getString(dateColDef.getTitle());
 			valueTuple.setForTimePeriod(timeStr);
 			valueTuple.setValue(r.getObject(String.format("Sum [%s]", sumColName)));
@@ -224,38 +255,50 @@ public class Functions {
 
 	/**
 	 * expandPerson - 将两个和人员有关的表（物理原始数据表或是在内存中的表)做关联
-	 * @param t1 - 表1
-	 * @param t2 - 表2
+	 * 
+	 * @param t1
+	 *            - 表1
+	 * @param t2
+	 *            - 表2
 	 * @return 关联后的表
 	 */
-	public static DataSheetWrapper associateByPerson(Object t1, Object t2) {
-		Table table1 = null;
-		Table table2 = null;
-		String joinKey1 = null;
-		String joinKey2 = null;
+	public static DataSheetWrapper associateByPerson(Object... tList) {
+		List<Table> tables = new ArrayList<Table>();
+		List<String> keys = new ArrayList<String>();
 		Map<String, DataItemDef> defs = null;
-		if ((t1 instanceof DataSheetWrapper || t1 instanceof ValueTupleListWrapper)
-				&& (t2 instanceof DataSheetWrapper || t2 instanceof ValueTupleListWrapper)) {
-			if (t1 instanceof ValueTupleListWrapper) {
-				table1 = convertToTable((ValueTupleListWrapper) t1);
-				joinKey1 = "employee_id";
-				defs = ((ValueTupleListWrapper) t1).getDataItemDefs();
-			} else {
-				table1 = (Table) DataSheetWrapper.unwrap(t1);
-				joinKey1 = getPersonColumnName(((DataSheetWrapper) t1).getDef(), table1.name());
-				defs = ((DataSheetWrapper) t1).getDef();
-			}
-			if (t2 instanceof ValueTupleListWrapper) {
-				table2 = convertToTable((ValueTupleListWrapper) t2);
-				joinKey2 = "employee_id";
-			} else {
-				table2 = (Table) DataSheetWrapper.unwrap(t2);
-				joinKey2 = getPersonColumnName(((DataSheetWrapper) t2).getDef(), table2.name());
-			}
-			return new DataSheetWrapper(table1.joinOn(joinKey1).inner(table2, joinKey2, true), defs);
 
+		for (Object t : tList) {
+			if (t instanceof ValueTupleListWrapper) {
+				tables.add(convertToTable((ValueTupleListWrapper) t));
+				keys.add("employee_id");
+				defs = ((ValueTupleListWrapper) t).getDataItemDefs();
+			} else if (t instanceof DataSheetWrapper) {
+				Table ta = (Table) DataSheetWrapper.unwrap(t);
+				tables.add(ta);
+				keys.add(getPersonColumnName(((DataSheetWrapper) t).getDef(), ta.name()));
+				defs = ((DataSheetWrapper) t).getDef();
+			} else if (t instanceof NTEObject){
+				throw new NTEException(new ExpressionEvaluationException("Invalid parameters")) ;
+			}else {
+				throw new ExpressionEvaluationException("Invalid parameters");
+			}
 		}
-		throw new ExpressionEvaluationException("Invalid parameters");
+
+		Table ret = null;
+		String key = null;
+		for (int i = 0; i < tables.size(); i++) {
+			if (ret == null) {
+				ret = tables.get(i);
+				key = keys.get(i);
+			}else {
+				ret = ret.joinOn(key).inner(tables.get(i), keys.get(i), true);
+			}
+		}
+		if (ret != null)
+			return new DataSheetWrapper(ret, defs);
+		else
+			return null;
+
 	}
 
 	private static Table convertToTable(ValueTupleListWrapper t1) {
@@ -269,19 +312,29 @@ public class Functions {
 				r.setInt("employee_id", Integer.valueOf(tuple.getOrgId()).intValue());
 			if (tuple.getForTimePeriod() != null)
 				r.setString("wdate", tuple.getForTimePeriod());
-			r.setDouble("value", ((BigDecimal) tuple.getValue()).doubleValue());
+			if (tuple.getValue() instanceof BigDecimal) {
+				r.setDouble("value", ((BigDecimal)tuple.getValue()).doubleValue());
+			}else if (tuple.getValue() instanceof Double) {
+				r.setDouble("value", (Double)tuple.getValue());
+			}else
+				throw new RuntimeException ("Invalid tuple's property 'value'");
 		}
 		return t;
 	}
 
 	/**
 	 * iteratePerRow - 对数据表中的每一行按给出的表达式做评估
-	 * @param table - 数据表
-	 * @param expression - 表达式
-	 * @return 一个在内存中的表结构，其中包括原表中可能有的key 字段： 组织的标示（项目，班组或是个人）， 时间的标示，和“value” 字段（表达式评估的结果）。 
+	 * 
+	 * @param table
+	 *            - 数据表
+	 * @param expression
+	 *            - 表达式
+	 * @return 一个在内存中的表结构，其中包括原表中可能有的key 字段： 组织的标示（项目，班组或是个人）， 时间的标示，和“value”
+	 *         字段（表达式评估的结果）。
 	 *         如果原表中没有组织的标示的字段，对应的属性就不设置；如果原表中没有时间标示的字段，对应的属性就设置成缺省的此次计算对应的时间批次
 	 */
-	public static ValueTupleListWrapper iteratePerRow(DataSheetWrapper table, String expression, String defaultTimeStr) {
+	public static ValueTupleListWrapper iteratePerRow(DataSheetWrapper table, String expression,
+			String defaultTimeStr) {
 		List<ValueTuple> ret = new ArrayList<ValueTuple>();
 		ExpressionEvaluator evaluator = new GroovyExpressionEvaluator();
 		Table t = (Table) table.unwrap(table);

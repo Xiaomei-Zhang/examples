@@ -67,6 +67,8 @@ public class GroovyExpressionEvaluator implements ExpressionEvaluator {
         		if (((MissingMethodException)e).getArguments().length == 1 && ((MissingMethodException)e).getArguments()[0].getClass().getName().equals("expression.NTEObject")) {
         			throw new NTEException (e);
         		}
+        	}else if (e instanceof NTEException) {
+        		throw e;
         	}
             String msg = String.format("Failed to evaluate expression at %s\n context=%s\n body=%s", location, shell.getContext().getVariables(), expression);
             log.error(msg, e);

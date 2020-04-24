@@ -25,14 +25,28 @@ public class CalculationEngine {
 	private Map<String, DataItemDef> rawDataDefs;
 	private Map<String, ItemDef> itemDefs;
 	private Map<String, String> tableNameTitleMap;
+	private Map<String, List<String>>tableColTitleMap;
 	private ExpressionEvaluator evaluator;
 
 	public CalculationEngine(Map<String, DataItemDef> rawDataDefs, Map<String, ItemDef> itemDefs) {
 		this.rawDataDefs = rawDataDefs;
 		populateTableNameLookup();
+		populateTableColTitleMap();
 		this.itemDefs = itemDefs;
 		initEvaluator();
 
+	}
+
+	private void populateTableColTitleMap() {
+		this.tableColTitleMap = new HashMap<String, List<String>> ();
+		for (DataItemDef dataItemDef : this.rawDataDefs.values()) {
+			List<String> colTitles = tableColTitleMap.get(dataItemDef.getTable_title());
+			if (colTitles == null) {
+				colTitles = new ArrayList<String> ();
+				tableColTitleMap.put(dataItemDef.getTable_title(), colTitles);
+			}
+			colTitles.add(dataItemDef.getTitle());
+		}		
 	}
 
 	private void populateTableNameLookup() {
@@ -63,7 +77,8 @@ public class CalculationEngine {
 
 		// add raw data to calculation context
 		for (Table table : tables) {
-			// System.out.println(table);
+			//trim table
+			trimTable (table);
 			evaluator.getEvaluationCtx().put(this.tableNameTitleMap.get(table.name()),
 					new DataSheetWrapper(table, this.rawDataDefs));
 			System.out.println(String.format("add %s", this.tableNameTitleMap.get(table.name())));
@@ -79,6 +94,16 @@ public class CalculationEngine {
 		}
 		outputCalResult(itemVals);
 		return new ArrayList(itemVals.values());
+	}
+
+	private void trimTable(Table table) {
+		List<String> colNames = this.tableColTitleMap.get(table.name());
+		List<String> tableColNames = table.columnNames();
+		for (String name : tableColNames) {
+			if (!colNames.contains(name)) {
+				table.removeColumns(name);
+			}
+		}
 	}
 
 	private void outputCalResult(Map<String, Object> itemVal) {
