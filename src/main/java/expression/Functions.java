@@ -4,9 +4,11 @@ import static tech.tablesaw.aggregate.AggregateFunctions.sum;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
@@ -87,7 +89,11 @@ public class Functions {
 		Selection sel = null;
 		String title = table.getDef().get(col_name).getTitle();
 		if ("=".equals(operator)) {
+			if (((Table) table.unwrap(table)).column(col_name).type() == ColumnType.STRING){
 			sel = ((Table) table.unwrap(table)).stringColumn(title).isEqualTo((String) val);
+			}else if (((Table) table.unwrap(table)).column(col_name).type() == ColumnType.LOCAL_DATE_TIME) {
+				sel = ((Table) table.unwrap(table)).dateTimeColumn(title).isEqualTo((LocalDateTime)val);
+			}
 		} else if ("within".equals(operator)) {
 			Column col = ((Table) table.unwrap(table)).column(title);
 			if (col.type() == ColumnType.LOCAL_DATE_TIME) {
@@ -138,6 +144,7 @@ public class Functions {
 	 */
 	public static Integer countif(DataSheetWrapper table, String col_name, String operator, Object val,
 			String count_col_name) {
+		System.out.print(table.unwrap(table));
 		Selection sel = getSelection(table, col_name, operator, val);
 		String count_title = table.getDef().get(count_col_name).getTitle();
 		if (sel != null) {
@@ -261,18 +268,39 @@ public class Functions {
 	 */
 	public static DataSheetWrapper associateByPerson(Object... tList) {
 		List<Table> tables = new ArrayList<Table>();
-		List<String> keys = new ArrayList<String>();
+		Map<Object, List<String>> keys = new HashMap<Object, List<String>>();
 		Map<String, DataItemDef> defs = null;
+		int numOfWDateTables = 0;
+		
+		for (Object t: tList) {
+			if (t instanceof ValueTupleListWrapper) 
+				numOfWDateTables = numOfWDateTables +1;
+			else if  (t instanceof DataSheetWrapper) {
+				Table ta = (Table) DataSheetWrapper.unwrap(t);
+				if (getWDateKeyColumnName(((DataSheetWrapper) t).getDef(), ta.name()) != null) 
+					numOfWDateTables = numOfWDateTables +1;
+			}
+		}
 
 		for (Object t : tList) {
 			if (t instanceof ValueTupleListWrapper) {
 				tables.add(convertToTable((ValueTupleListWrapper) t));
-				keys.add("employee_id");
+				List keyList = new ArrayList<String> ();
+				keyList.add("employee_id");
+				keys.put(t, keyList);
+				if (numOfWDateTables > 1) {
+					keyList.add("wdate");
+				}
 				defs = ((ValueTupleListWrapper) t).getDataItemDefs();
 			} else if (t instanceof DataSheetWrapper) {
 				Table ta = (Table) DataSheetWrapper.unwrap(t);
 				tables.add(ta);
-				keys.add(getPersonColumnName(((DataSheetWrapper) t).getDef(), ta.name()));
+				List keyList = new ArrayList<String> ();
+				keyList.add(getPersonColumnName(((DataSheetWrapper) t).getDef(), ta.name()));
+				if (numOfWDateTables > 1 && getWDateKeyColumnName(((DataSheetWrapper) t).getDef(), ta.name()) != null) {
+					keyList.add( getWDateKeyColumnName(((DataSheetWrapper) t).getDef(), ta.name()));
+				}
+				keys.put(ta, keyList);
 				defs = ((DataSheetWrapper) t).getDef();
 			} else if (t instanceof NTEObject){
 				throw new NTEException(new ExpressionEvaluationException("Invalid parameters")) ;
@@ -282,17 +310,26 @@ public class Functions {
 		}
 
 		Table ret = null;
-		String key = null;
+		List<String> key = null;
 		for (int i = 0; i < tables.size(); i++) {
 			if (ret == null) {
 				ret = tables.get(i);
-				key = keys.get(i);
+				key = keys.get(ret);
 			}else {
-				ret = ret.joinOn(key).inner(tables.get(i), keys.get(i), true);
+				if (key.size() == 1) {
+					ret = ret.joinOn(key.get(0)).inner(tables.get(i), keys.get(tables.get(i)).get(0), true);
+					key = keys.get(tables.get(i));
+				}
+				else if (key.size() > 1)  {
+					ret = ret.joinOn(key.get(0), key.get(1)).inner(tables.get(i), true, keys.get(tables.get(i)).get(0),  keys.get(tables.get(i)).get(1));
+					key = keys.get(tables.get(i));
+				}
 			}
 		}
-		if (ret != null)
+		if (ret != null) {
+			ret = ret.select("公司工号","时间","排班时长");
 			return new DataSheetWrapper(ret, defs);
+		}
 		else
 			return null;
 
@@ -357,7 +394,7 @@ public class Functions {
 			vTuple.setOrgId(String.valueOf(personKey));
 		}
 		if (dateKeyColName != null && !dateKeyColName.isEmpty()) {
-			dateKey = r.getString(dateKeyColName);
+			dateKey = r.getDateTime(dateKeyColName).toString();
 		}
 		vTuple.setForTimePeriod(dateKey);
 		vTuple.setValue(v);
@@ -374,6 +411,15 @@ public class Functions {
 		return null;
 	}
 
+	private static String getWDateKeyColumnName(Map<String, DataItemDef> dataItemDefs, String tableTitle) {
+		for (DataItemDef def : dataItemDefs.values()) {
+			if (tableTitle.equals(def.getTable_title())
+					&& (def.getType().equals("WDate") )) {
+				return def.getTitle();
+			}
+		}
+		return null;
+	}
 	private static String getPersonColumnName(Map<String, DataItemDef> dataItemDefs, String tableTitle) {
 		if ("人员数据-HR".equals(tableTitle)) {
 			return "公司工号";
@@ -385,4 +431,25 @@ public class Functions {
 		}
 		return null;
 	}
+	
+    public static boolean isBefore(Object one) {
+        if (one instanceof LocalDateTime) {
+            LocalDateTime t = (LocalDateTime) one;
+            one = LocalDate.of(t.getYear(), t.getMonth(), t.getDayOfMonth());
+        }
+        return isBefore((LocalDate) one, null);
+    }
+
+    public static boolean isBefore(LocalDate one, LocalDate two) {
+        if (null == one) {
+            throw new IllegalArgumentException("日期为空");
+        }
+
+        if (null == two) {
+            two = LocalDate.now();
+        }
+
+        return one.isBefore(two);
+    }
+    
 }

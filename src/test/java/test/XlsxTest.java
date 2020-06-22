@@ -15,6 +15,7 @@ package test;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -47,7 +48,7 @@ public class XlsxTest {
 		validateReportsDef(itemDefs, dataItemDefs);
 		 CalculationEngine engine = new CalculationEngine(dataItemDefs,
 		 itemDefs);
-		 List<ItemValue> vals = engine.calculate("2020-1",source);
+		 List<ItemValue> vals = engine.calculate(LocalDateTime.of(2020,1,15,0,0).toString(),source);
 
 	}
 
@@ -162,7 +163,7 @@ public class XlsxTest {
 		Map<String, ItemDef> itemDefs = new HashMap<String, ItemDef>();
 		Table cal_table;
 		try {
-			cal_table = new XlsxReader().read(XlsxReadOptions.builder("testdata/subject_save.xlsx").sheetIndex(0).build());
+			cal_table = new XlsxReader().read(XlsxReadOptions.builder("testdata/a.xlsx").sheetIndex(0).build());
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
@@ -173,7 +174,7 @@ public class XlsxTest {
 			String name = row.getString("name");
 			String title = row.getString("title");
 			String params = row.getString("parameter");
-			String calculate = row.getString("calculate");
+//			String calculate = row.getString("calculate");
 			JSONObject jsonObj = JSON.parseObject(params);
 			int order = row.getInt("order");
 			if (name != null && !name.isEmpty()) {
@@ -182,7 +183,7 @@ public class XlsxTest {
 				itemMeta.setExpression(jsonObj.getString("value_formula"));
 				itemMeta.setParameters(params);
 				itemMeta.setOrder(order);
-				itemMeta.setCalculate(calculate);
+//				itemMeta.setCalculate(calculate);
 				itemDefs.put(name, itemMeta);
 			}
 
